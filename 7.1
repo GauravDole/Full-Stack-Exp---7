@@ -1,0 +1,40 @@
+// frontend/src/App.js
+import React, { useEffect, useState } from "react";
+import axios from "axios";
+import "./App.css";
+
+function App() {
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    axios.get("http://localhost:5000/api/products")
+      .then(res => {
+        setProducts(res.data);
+        setLoading(false);
+      })
+      .catch(err => {
+        setError("Failed to fetch products");
+        setLoading(false);
+      });
+  }, []);
+
+  if (loading) return <p>Loading products...</p>;
+  if (error) return <p style={{ color: "red" }}>{error}</p>;
+
+  return (
+    <div className="App">
+      <h1>Product List</h1>
+      <ul>
+        {products.map(p => (
+          <li key={p.id}>
+            <strong>{p.name}</strong> — ${p.price}
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
+export default App;
